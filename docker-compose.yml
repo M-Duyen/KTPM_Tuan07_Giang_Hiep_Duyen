@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:alpine
+    container_name: flashsale-redis
+    ports:
+      - "6379:6379"
+    restart: always
+
+  # Option: You can scale the PUs here if you want to use Docker for everything
+  # For now, we just need Redis as the Data Grid
