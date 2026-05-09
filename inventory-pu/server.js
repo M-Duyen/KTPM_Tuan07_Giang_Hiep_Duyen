@@ -63,6 +63,23 @@ app.post('/api/stock/check', async (req, res) => {
     }
 });
 
+// POST /api/stock/initialize - Initialize stock for a new product
+app.post('/api/stock/initialize', async (req, res) => {
+    const { productId, initialStock, stock } = req.body;
+    try {
+        if (!productId) {
+            return res.status(400).json({ error: 'Product ID is required' });
+        }
+        
+        const quantity = parseInt(initialStock ?? stock ?? 0);
+        await client.set(`stock:${productId}`, quantity);
+        
+        res.json({ message: 'Stock initialized', productId, stock: quantity });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 app.listen(PORT, '0.0.0.0', async () => {
     await connect();
     console.log(`Inventory PU running on http://0.0.0.0:${PORT}`);
