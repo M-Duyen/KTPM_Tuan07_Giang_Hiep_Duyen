@@ -6,14 +6,18 @@ const ORDER_PU = "http://192.168.137.103:8083/api";
 
 function StatusBadge({ status }) {
   const map = {
-    pending:   "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
+    pending: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
     confirmed: "bg-blue-500/20 text-blue-400 border-blue-500/30",
     completed: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
     cancelled: "bg-rose-500/20 text-rose-400 border-rose-500/30",
   };
-  const cls = map[status?.toLowerCase()] ?? "bg-slate-700 text-slate-400 border-slate-600";
+  const cls =
+    map[status?.toLowerCase()] ??
+    "bg-slate-700 text-slate-400 border-slate-600";
   return (
-    <span className={`text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full border ${cls}`}>
+    <span
+      className={`text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full border ${cls}`}
+    >
       {status ?? "unknown"}
     </span>
   );
@@ -43,7 +47,8 @@ export default function MyOrders({ userId, onClose }) {
     fetchOrders();
   }, [userId]);
 
-  const toggleExpand = (id) => setExpandedId((prev) => (prev === id ? null : id));
+  const toggleExpand = (id) =>
+    setExpandedId((prev) => (prev === id ? null : id));
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
@@ -93,35 +98,40 @@ export default function MyOrders({ userId, onClose }) {
             <div className="flex flex-col items-center justify-center py-16 text-slate-600">
               <Package size={48} className="mb-4 opacity-30" />
               <p className="text-lg font-medium">No orders yet</p>
-              <p className="text-sm mt-1">Start shopping to see your orders here.</p>
+              <p className="text-sm mt-1">
+                Start shopping to see your orders here.
+              </p>
             </div>
           )}
 
           {orders.map((order) => {
-            const isOpen = expandedId === order.id;
-            const total = order.items?.reduce(
-              (sum, item) => sum + item.price * item.quantity,
-              0
-            ) ?? order.totalPrice ?? 0;
+            const isOpen = expandedId === order.orderId;
+            const total =
+              order.items?.reduce(
+                (sum, item) => sum + item.price * item.quantity,
+                0,
+              ) ??
+              order.total ??
+              0;
 
             return (
               <div
-                key={order.id}
+                key={order.orderId}
                 className="bg-slate-800/60 border border-white/5 rounded-2xl overflow-hidden"
               >
                 {/* Order summary row */}
                 <button
                   className="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-800 transition-colors text-left"
-                  onClick={() => toggleExpand(order.id)}
+                  onClick={() => toggleExpand(order.orderId)}
                 >
                   <div className="flex items-center gap-4">
                     <div>
                       <p className="text-sm font-semibold text-white">
-                        Order #{order.id}
+                        Order #{order.orderId}
                       </p>
                       <p className="text-xs text-slate-500 mt-0.5">
-                        {order.createdAt
-                          ? new Date(order.createdAt).toLocaleString()
+                        {order.timestamp
+                          ? new Date(order.timestamp).toLocaleString()
                           : "—"}
                       </p>
                     </div>
@@ -160,12 +170,16 @@ export default function MyOrders({ userId, onClose }) {
                         </div>
                       ))
                     ) : (
-                      <p className="text-slate-500 text-sm">No item details available.</p>
+                      <p className="text-slate-500 text-sm">
+                        No item details available.
+                      </p>
                     )}
 
                     <div className="pt-2 mt-2 border-t border-white/5 flex justify-between text-sm font-semibold">
                       <span className="text-slate-400">Total</span>
-                      <span className="text-white">${Number(total).toFixed(2)}</span>
+                      <span className="text-white">
+                        ${Number(total).toFixed(2)}
+                      </span>
                     </div>
                   </div>
                 )}

@@ -50,6 +50,7 @@ app.post("/api/checkout", async (req, res) => {
     const order = {
       orderId,
       userId,
+      status: "pending",
       items: JSON.stringify(cart),
       total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
       timestamp: new Date().toISOString(),

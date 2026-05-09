@@ -99,7 +99,6 @@ function App() {
     const interval = setInterval(async () => {
       try {
         const res = await axios.get(`${CART_PU}/cart/${USER_ID}`);
-        console.log("Polling cart:", res.data);
 
         setCart(res.data);
       } catch (err) {
@@ -268,15 +267,15 @@ function App() {
             onClick={() => setIsCartOpen(true)}
             className="relative flex items-center gap-2 bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl transition-all border border-white/5 active:scale-95"
           >
-          <ShoppingCart size={20} className="text-slate-400" />
+            <ShoppingCart size={20} className="text-slate-400" />
 
-          <span className="font-semibold text-sm">Cart</span>
+            <span className="font-semibold text-sm">Cart</span>
 
-          {cart.length > 0 && (
-            <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-lg shadow-rose-500/40">
-              {cart.reduce((a, b) => a + b.quantity, 0)}
-            </span>
-          )}
+            {cart.length > 0 && (
+              <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-lg shadow-rose-500/40">
+                {cart.reduce((a, b) => a + b.quantity, 0)}
+              </span>
+            )}
           </button>
         </div>
       </header>
