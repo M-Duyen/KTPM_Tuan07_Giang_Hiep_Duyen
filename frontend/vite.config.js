@@ -8,4 +8,10 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+
+  server: {
+    allowedHosts: [
+      'aracelis-provable-grammatically.ngrok-free.dev'
+    ]
+  }
 })
