@@ -8,7 +8,9 @@ import {
   Package,
   Info,
   X,
+  ClipboardList,
 } from "lucide-react";
+import MyOrders from "./components/MyOrders";
 
 const PRODUCT_PU = "http://192.168.137.68:8081/api";
 const CART_PU = "http://192.168.137.103:8082/api";
@@ -21,6 +23,7 @@ function App() {
   const [stocks, setStocks] = useState({});
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isOrdersOpen, setIsOrdersOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -252,10 +255,19 @@ function App() {
           </div>
         </div>
 
-        <button
-          onClick={() => setIsCartOpen(true)}
-          className="relative flex items-center gap-2 bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl transition-all border border-white/5 active:scale-95"
-        >
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setIsOrdersOpen(true)}
+            className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl transition-all border border-white/5 active:scale-95"
+          >
+            <ClipboardList size={20} className="text-slate-400" />
+            <span className="font-semibold text-sm">My Orders</span>
+          </button>
+
+          <button
+            onClick={() => setIsCartOpen(true)}
+            className="relative flex items-center gap-2 bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl transition-all border border-white/5 active:scale-95"
+          >
           <ShoppingCart size={20} className="text-slate-400" />
 
           <span className="font-semibold text-sm">Cart</span>
@@ -265,8 +277,13 @@ function App() {
               {cart.reduce((a, b) => a + b.quantity, 0)}
             </span>
           )}
-        </button>
+          </button>
+        </div>
       </header>
+
+      {isOrdersOpen && (
+        <MyOrders userId={userId} onClose={() => setIsOrdersOpen(false)} />
+      )}
 
       <main className="max-w-7xl mx-auto p-6 lg:p-10">
         {message && (

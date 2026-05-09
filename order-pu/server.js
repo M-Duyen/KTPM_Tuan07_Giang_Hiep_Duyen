@@ -66,6 +66,42 @@ app.post("/api/checkout", async (req, res) => {
   }
 });
 
+// GET /api/orders/:userId
+app.get("/api/orders/:userId", async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    // Lấy tất cả key order
+    const keys = await client.keys("order:*");
+
+    if (keys.length === 0) {
+      return res.json([]);
+    }
+
+    const orders = [];
+    for (const key of keys) {
+      const order = await client.hGetAll(key);
+
+      // Filter theo userId
+      if (order.userId === userId) {
+        orders.push({
+          ...order,
+          items: JSON.parse(order.items),
+          total: parseFloat(order.total),
+        });
+      }
+    }
+
+    orders.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+    });
+  }
+});
+
 app.listen(PORT, IP, async () => {
   await connect();
   console.log(`Order PU running on http://${IP}:${PORT}`);
