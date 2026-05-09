@@ -135,7 +135,7 @@ export default function MyOrders({ userId, onClose }) {
                           : "—"}
                       </p>
                     </div>
-                    <StatusBadge status={order.status} />
+                    <StatusBadge status={order.status ? order.status: "confirmed"} />
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="text-blue-400 font-bold">
