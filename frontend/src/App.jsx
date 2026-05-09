@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
   ShoppingCart,
   ShoppingBag,
@@ -7,13 +7,13 @@ import {
   Trash2,
   Package,
   Info,
-  X
-} from 'lucide-react';
+  X,
+} from "lucide-react";
 
-const PRODUCT_PU = 'http://192.168.43.17:8081/api';
-const CART_PU = 'http://192.168.43.46:8082/api';
-const ORDER_PU = 'http://192.168.43.46:8083/api';
-const INVENTORY_PU = 'http://192.168.43.95:8084/api';
+const PRODUCT_PU = "http://192.168.43.17:8081/api";
+const CART_PU = "http://192.168.43.46:8082/api";
+const ORDER_PU = "http://192.168.43.46:8083/api";
+const INVENTORY_PU = "http://192.168.43.95:8084/api";
 
 function App() {
   const [products, setProducts] = useState([]);
@@ -22,19 +22,19 @@ function App() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
 
   // Fake Login
-  const [userId, setUserId] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [userId, setUserId] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleLogin = (e) => {
     e.preventDefault();
 
     if (!username.trim()) {
-      alert('Please enter username');
+      alert("Please enter username");
       return;
     }
 
@@ -56,7 +56,7 @@ function App() {
 
       setStocks(stockData);
     } catch (err) {
-      console.error('Failed to fetch products', err);
+      console.error("Failed to fetch products", err);
     }
   };
 
@@ -67,7 +67,7 @@ function App() {
       const res = await axios.get(`${CART_PU}/cart/${userId}`);
       setCart(res.data);
     } catch (err) {
-      console.error('Failed to fetch cart', err);
+      console.error("Failed to fetch cart", err);
     }
   };
 
@@ -75,21 +75,36 @@ function App() {
     if (!isLoggedIn) return;
 
     fetchProducts();
-    fetchCart();
 
     const interval = setInterval(() => {
       products.forEach(async (p) => {
         const sRes = await axios.get(`${INVENTORY_PU}/stock/${p.id}`);
 
-        setStocks(prev => ({
+        setStocks((prev) => ({
           ...prev,
-          [p.id]: sRes.data.stock
+          [p.id]: sRes.data.stock,
         }));
       });
     }, 2000);
 
     return () => clearInterval(interval);
   }, [products.length, isLoggedIn]);
+
+  useEffect(() => {
+    fetchCart();
+
+    const interval = setInterval(async () => {
+      try {
+        const res = await axios.get(`${CART_PU}/cart/${USER_ID}`);
+        console.log("Polling cart:", res.data);
+
+        setCart(res.data);
+      } catch (err) {
+        console.error("Polling cart failed", err);
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const addToCart = async (product) => {
     try {
@@ -98,17 +113,15 @@ function App() {
         productId: product.id,
         name: product.name,
         price: parseFloat(product.price),
-        quantity: 1
+        quantity: 1,
       });
 
       fetchCart();
 
       setMessage(`Added ${product.name} to cart!`);
-
-      setTimeout(() => setMessage(''), 3000);
-
+      setTimeout(() => setMessage(""), 3000);
     } catch (err) {
-      alert('Failed to add to cart');
+      alert("Failed to add to cart");
     }
   };
 
@@ -116,24 +129,18 @@ function App() {
     setLoading(true);
 
     try {
-      await axios.post(`${ORDER_PU}/checkout`, {
-        userId: userId
-      });
-
-      setMessage('Flash Sale Success! Order placed.');
-
+      const res = await axios.post(`${ORDER_PU}/checkout`, { userId: USER_ID });
+      setMessage("Flash Sale Success! Order placed.");
       setCart([]);
 
       fetchProducts();
 
       setIsCartOpen(false);
-
     } catch (err) {
-      alert(err.response?.data?.error || 'Checkout failed');
-
+      alert(err.response?.data?.error || "Checkout failed");
     } finally {
       setLoading(false);
-      setTimeout(() => setMessage(''), 5000);
+      setTimeout(() => setMessage(""), 5000);
     }
   };
 
@@ -145,14 +152,12 @@ function App() {
 
       setCart([]);
 
-      setMessage('All items removed from cart');
-
+      setMessage("All items removed from cart");
     } catch (err) {
-      alert('Failed to remove items');
-
+      alert("Failed to remove items");
     } finally {
       setLoading(false);
-      setTimeout(() => setMessage(''), 3000);
+      setTimeout(() => setMessage(""), 3000);
     }
   };
 
@@ -160,23 +165,19 @@ function App() {
     try {
       await axios.delete(`${CART_PU}/cart/${userId}/${productId}`);
 
-      setCart(prev =>
-        prev.filter(item => item.productId !== productId)
-      );
+      setCart((prev) => prev.filter((item) => item.productId !== productId));
 
-      setMessage('Item removed from cart');
-
+      setMessage("Item removed from cart");
     } catch (err) {
-      alert('Failed to remove item');
-
+      alert("Failed to remove item");
     } finally {
-      setTimeout(() => setMessage(''), 3000);
+      setTimeout(() => setMessage(""), 3000);
     }
   };
 
   const cartTotal = cart.reduce(
     (sum, item) => sum + item.price * item.quantity,
-    0
+    0,
   );
 
   // LOGIN SCREEN
@@ -187,13 +188,9 @@ function App() {
           onSubmit={handleLogin}
           className="w-full max-w-md bg-slate-900 border border-white/10 rounded-3xl p-8 shadow-2xl"
         >
-          <h1 className="text-3xl font-bold text-white mb-2">
-            Login
-          </h1>
+          <h1 className="text-3xl font-bold text-white mb-2">Login</h1>
 
-          <p className="text-slate-400 mb-8">
-            Fake login để giả lập user
-          </p>
+          <p className="text-slate-400 mb-8">Fake login để giả lập user</p>
 
           <div className="space-y-5">
             <div>
@@ -261,9 +258,7 @@ function App() {
         >
           <ShoppingCart size={20} className="text-slate-400" />
 
-          <span className="font-semibold text-sm">
-            Cart
-          </span>
+          <span className="font-semibold text-sm">Cart</span>
 
           {cart.length > 0 && (
             <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-lg shadow-rose-500/40">
@@ -285,7 +280,7 @@ function App() {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {products.map(product => (
+          {products.map((product) => (
             <div
               key={product.id}
               className="group glass rounded-[2rem] overflow-hidden transition-all duration-500 hover:border-blue-500/50 hover:shadow-2xl hover:shadow-blue-500/10 flex flex-col"
@@ -298,9 +293,7 @@ function App() {
                 />
 
                 <div className="absolute top-4 left-4">
-                  <span className="flash-badge">
-                    Flash Deal
-                  </span>
+                  <span className="flash-badge">Flash Deal</span>
                 </div>
               </div>
 
@@ -309,12 +302,10 @@ function App() {
                   <h2 className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors">
                     {product.name}
                   </h2>
-
                   <span className="text-2xl font-black text-blue-400">
                     ${product.price}
                   </span>
                 </div>
-
                 <p className="text-slate-400 text-sm mb-6 line-clamp-2 leading-relaxed">
                   {product.description}
                 </p>
@@ -324,14 +315,16 @@ function App() {
                     <Package size={14} className="text-slate-400" />
                   </div>
 
-                  <span className={`text-xs font-medium uppercase tracking-wider ${
-                    stocks[product.id] <= 3
-                      ? 'text-rose-500 animate-pulse'
-                      : 'text-slate-500'
-                  }`}>
+                  <span
+                    className={`text-xs font-medium uppercase tracking-wider ${
+                      stocks[product.id] <= 3
+                        ? "text-rose-500 animate-pulse"
+                        : "text-slate-500"
+                    }`}
+                  >
                     {stocks[product.id] > 0
                       ? `${stocks[product.id]} Units Left`
-                      : 'Sold Out'}
+                      : "Sold Out"}
                   </span>
                 </div>
 
@@ -341,20 +334,22 @@ function App() {
                     disabled={
                       stocks[product.id] <= 0 ||
                       stocks[product.id] -
-                        (cart.find(item => item.productId === product.id)?.quantity || 0) <= 0
+                        (cart.find((item) => item.productId === product.id)
+                          ?.quantity || 0) <=
+                        0
                     }
                     onClick={() => addToCart(product)}
                   >
                     <ShoppingBag size={18} />
 
-                    {
-                      stocks[product.id] <= 0
-                        ? 'Sold Out'
-                        : stocks[product.id] -
-                            (cart.find(item => item.productId === product.id)?.quantity || 0) <= 0
-                          ? 'All In Cart'
-                          : 'Buy Now'
-                    }
+                    {stocks[product.id] <= 0
+                      ? "Sold Out"
+                      : stocks[product.id] -
+                            (cart.find((item) => item.productId === product.id)
+                              ?.quantity || 0) <=
+                          0
+                        ? "All In Cart"
+                        : "Buy Now"}
                   </button>
 
                   <button
