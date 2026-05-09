@@ -58,6 +58,31 @@ app.delete("/api/cart/:userId", async (req, res) => {
   }
 });
 
+// DELETE /api/cart/:userId/:productId
+app.delete("/api/cart/:userId/:productId", async (req, res) => {
+  const { userId, productId } = req.params;
+
+  try {
+    const cartKey = `cart:${userId}`;
+    const cartData = await client.get(cartKey);
+
+    let cart = cartData ? JSON.parse(cartData) : [];
+
+    cart = cart.filter((item) => item.productId !== productId);
+
+    await client.set(cartKey, JSON.stringify(cart));
+
+    res.json({
+      message: "Item removed",
+      cart,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+    });
+  }
+});
+
 app.listen(PORT, IP, async () => {
   await connect();
   console.log(`Cart PU running on http://${IP}:${PORT}`);

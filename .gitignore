@@ -1,3 +1,5 @@
 frontend/node_modules/*
 product-pu/node_modules/*
 /cart-pu/node_modules
+/node_modules
+.claude/worktrees/epic-euclid-7666d3/
