@@ -6,11 +6,11 @@
   "scripts": {
     "init-db": "node init-redis.js",
     "docker-redis": "docker-compose up -d",
-    "pu-product": "cd product-pu && node server.js",
-    "pu-cart": "cd cart-pu && node server.js",
-    "pu-order": "cd order-pu && node server.js",
-    "pu-inventory": "cd inventory-pu && node server.js",
-    "pu-inventory-2": "cd inventory-pu && set PORT=8085 && node server.js",
+    "pu-product": "cd product-pu && nodemon --watch . --watch ../shared server.js",
+    "pu-cart": "cd cart-pu && nodemon --watch . --watch ../shared server.js",
+    "pu-order": "cd order-pu && nodemon --watch . --watch ../shared server.js",
+    "pu-inventory": "cd inventory-pu && nodemon --watch . --watch ../shared server.js",
+    "pu-inventory-2": "cd inventory-pu && set PORT=8085 && nodemon --watch . --watch ../shared server.js",
     "frontend": "cd frontend && npm run dev",
     "start": "concurrently \"npm run pu-product\" \"npm run pu-cart\" \"npm run pu-order\" \"npm run pu-inventory\" \"npm run pu-inventory-2\" \"npm run frontend\""
   },
@@ -21,5 +21,8 @@
     "concurrently": "^9.2.1",
     "dotenv": "^17.4.2",
     "redis": "^5.12.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   }
 }
