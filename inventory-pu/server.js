@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config();
+require('dotenv').config({ path: '../.env' });
 const { client, connect } = require('../shared/redisClient');
 
 const app = express();
@@ -26,10 +26,6 @@ app.post('/api/stock/decrease', async (req, res) => {
     try {
         const stockKey = `stock:${productId}`;
         
-        // Use Redis WATCH/MULTI/EXEC for atomic check-and-set OR a Lua script
-        // For simplicity and high performance, we use a simple check then DECRBY 
-        // but to be safe we should check if result < 0
-        
         const currentStock = await client.get(stockKey);
         if (parseInt(currentStock || 0) < quantity) {
             return res.status(400).json({ error: 'Insufficient stock' });
@@ -38,7 +34,6 @@ app.post('/api/stock/decrease', async (req, res) => {
         const newStock = await client.decrBy(stockKey, quantity);
         
         if (newStock < 0) {
-            // Rollback if it went negative (race condition)
             await client.incrBy(stockKey, quantity);
             return res.status(400).json({ error: 'Insufficient stock (race condition)' });
         }
@@ -68,7 +63,7 @@ app.post('/api/stock/check', async (req, res) => {
     }
 });
 
-app.listen(PORT, async () => {
+app.listen(PORT, '0.0.0.0', async () => {
     await connect();
-    console.log(`Inventory PU running on http://localhost:${PORT}`);
+    console.log(`Inventory PU running on http://0.0.0.0:${PORT}`);
 });
