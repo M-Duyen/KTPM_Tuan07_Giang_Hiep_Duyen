@@ -10,10 +10,10 @@ import {
   X,
 } from "lucide-react";
 
-const PRODUCT_PU = "http://192.168.43.17:8081/api";
-const CART_PU = "http://192.168.43.46:8082/api";
-const ORDER_PU = "http://192.168.43.46:8083/api";
-const INVENTORY_PU = "http://192.168.43.95:8084/api";
+const PRODUCT_PU = "http://192.168.137.68:8081/api";
+const CART_PU = "http://192.168.137.103:8082/api";
+const ORDER_PU = "http://192.168.137.103:8083/api";
+const INVENTORY_PU = "http://192.168.137.13:8084/api";
 
 function App() {
   const [products, setProducts] = useState([]);
