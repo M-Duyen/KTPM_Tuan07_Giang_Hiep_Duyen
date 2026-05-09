@@ -1,0 +1,6 @@
+node_modules
+.env
+frontend/node_modules
+order-pu/node_modules
+inventory-pu/node_modules
+payment-pu/node_modules
