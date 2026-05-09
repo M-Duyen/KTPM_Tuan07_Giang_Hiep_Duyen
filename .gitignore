@@ -7,8 +7,4 @@ product-pu/node_modules/*
 /cart-pu/node_modules
 /node_modules
 .claude/worktrees/epic-euclid-7666d3/
-inventory-pu/node_modules
-payment-pu/node_modules
-frontend/node_modules
-order-pu/node_modules
-product-pu/node_modules
+.claude/worktrees/compassionate-euler-161aa1/
