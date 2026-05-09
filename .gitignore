@@ -1,2 +1,3 @@
 frontend/node_modules/*
 product-pu/node_modules/*
+/cart-pu/node_modules
